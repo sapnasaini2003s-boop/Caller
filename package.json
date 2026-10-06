@@ -1,0 +1,16 @@
+{
+  "name": "facultyme-caller",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Telecalling app for FacultyMe — call schools, log vacancies, send WhatsApp.",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
+    "import": "node scripts/import-udise.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FacultyMe Caller Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">FacultyMe Caller</span>
+  <span class="tag">Admin</span>
+  <span class="who" id="whoBox" hidden><span id="whoName"></span><br><a href="#" id="signOut">Sign out</a></span>
+</div>
+
+<main>
+  <div id="flash"></div>
+  <div id="gate" class="empty">Checking your access…</div>
+
+  <!-- sign in -->
+  <section id="loginBox" class="card" style="max-width:380px;margin:40px auto" hidden>
+    <h2 class="page" style="margin-bottom:4px">Admin sign-in</h2>
+    <p class="sub" style="margin-bottom:18px">This panel is for admins. Callers use the phone app.</p>
+    <form id="loginForm">
+      <div class="field"><label for="lUser">Username</label>
+        <input id="lUser" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
+      <div class="field"><label for="lPass">Password</label>
+        <input id="lPass" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-steel" type="submit" style="width:100%">Sign in</button>
+    </form>
+  </section>
+
+  <div id="panel" hidden>
+
+    <!-- team -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="page">Team</h2>
+        <span class="muted" id="teamCount"></span>
+        <button class="btn btn-steel spacer" id="addToggle">Add caller</button>
+      </div>
+
+      <div id="addBox" class="addbox" hidden>
+        <h3>Add a caller</h3>
+        <div class="grid">
+          <div class="field"><label for="aName">Name</label><input id="aName" placeholder="Meera S"></div>
+          <div class="field"><label for="aMobile">Mobile</label><input id="aMobile" class="mono" inputmode="tel" placeholder="98860 41234"></div>
+          <div class="field"><label for="aArea">Area</label><input id="aArea" placeholder="Bengaluru South"></div>
+          <div class="field"><label for="aRole">Role</label>
+            <select id="aRole"><option value="caller">Caller</option><option value="admin">Admin</option></select></div>
+        </div>
+        <p class="muted" style="margin:13px 0 0">A caller ID and one-time password go to that mobile on WhatsApp. They set their own password on first sign-in.</p>
+        <div class="row" style="margin-top:13px">
+          <button class="btn btn-steel" id="addSave">Send login</button>
+          <button class="btn btn-ghost" id="addCancel">Cancel</button>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Caller</th><th>Area</th><th>Today</th><th>Vacancies</th><th>Access</th><th></th></tr></thead>
+          <tbody id="teamBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- schools -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="page">Schools</h2>
+        <span class="muted" id="schoolCount"></span>
+      </div>
+
+      <div class="grid" style="margin-bottom:14px">
+        <div>
+          <div class="field"><label for="csvFile">Import a CSV</label><input id="csvFile" type="file" accept=".csv,text/csv"></div>
+          <p class="muted">Columns: udiseCode, name, district, block, address, pincode, stdCode, phone, email, headMaster. Re-importing updates existing rows.</p>
+        </div>
+        <div>
+          <div class="field"><label for="assignTo">Assign unassigned schools to</label>
+            <select id="assignTo" multiple size="4"></select></div>
+          <button class="btn btn-steel" id="assignBtn">Share out evenly</button>
+        </div>
+      </div>
+
+      <div class="field"><label for="schQ">Search</label><input id="schQ" placeholder="Name, UDISE code or district"></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>School</th><th>District</th><th>Phone</th><th>Caller</th><th>Status</th></tr></thead>
+          <tbody id="schoolBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- trends -->
+    <div class="card">
+      <div class="card-head" style="margin-bottom:4px">
+        <h2 class="page">Calls over time</h2>
+        <select id="trendDays" class="spacer" style="width:auto">
+          <option value="14">Last 14 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </div>
+      <p class="sub" style="margin-bottom:14px">Calls made and vacancies found each day.</p>
+
+      <div class="legend">
+        <span><i style="background:var(--series-calls)"></i>Calls</span>
+        <span><i style="background:var(--series-vac)"></i>Vacancies</span>
+      </div>
+      <div class="chart-wrap"><div id="trendChart"></div></div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:22px 0 10px">By caller</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Caller</th><th>Calls</th><th>Schools</th><th>Vacancies</th><th>No answer</th><th>Avg length</th></tr></thead>
+          <tbody id="byCallerBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- call history -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="page">Call history</h2>
+        <span class="muted" id="histCount" class="spacer"></span>
+      </div>
+
+      <div class="grid" style="margin-bottom:14px">
+        <div class="field"><label for="hFrom">From</label><input id="hFrom" type="date"></div>
+        <div class="field"><label for="hTo">To</label><input id="hTo" type="date"></div>
+        <div class="field"><label for="hCaller">Caller</label><select id="hCaller"></select></div>
+        <div class="field"><label for="hOutcome">Outcome</label>
+          <select id="hOutcome">
+            <option value="">Any</option><option value="vacancy">Vacancy</option>
+            <option value="no_vacancy">No vacancy</option><option value="callback">Call back</option>
+            <option value="no_answer">No answer</option>
+          </select></div>
+        <div class="field"><label for="hQ">Search</label><input id="hQ" placeholder="School, subject or note"></div>
+      </div>
+
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn-ghost" id="expCalls">Export calls to Excel</button>
+        <button class="btn btn-ghost" id="expVac">Export vacancies to Excel</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>When</th><th>School</th><th>Caller</th><th>Outcome</th><th>Length</th><th></th></tr></thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-ghost" id="histMore" style="margin-top:12px" hidden>Show more</button>
+    </div>
+
+    <!-- report -->
+    <div class="card">
+      <div class="card-head">
+        <h2 class="page">Vacancies found</h2>
+        <input id="repDate" type="date" class="spacer" style="width:auto">
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="v mono" id="rCalls">0</div><div class="k">Calls</div></div>
+        <div class="stat"><div class="v mono" id="rSchools">0</div><div class="k">Schools</div></div>
+        <div class="stat"><div class="v mono" id="rVac" style="color:var(--go)">0</div><div class="k">Vacancies</div></div>
+        <div class="stat"><div class="v mono" id="rNoAns">0</div><div class="k">No answer</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>School</th><th>Subject</th><th>Grade</th><th>Caller</th></tr></thead>
+          <tbody id="repBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="/admin/admin.js"></script>
+</body>
+</html>

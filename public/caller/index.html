@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FacultyMe Caller</title>
+<meta name="theme-color" content="#2C5670">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon-64.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/caller.css">
+</head>
+<body>
+
+<div class="topbar" id="topbar" hidden>
+  <span class="brand">FacultyMe Caller</span>
+  <span class="who"><span id="whoName"></span><br><a href="#" id="signOut">Sign out</a></span>
+</div>
+
+<main>
+  <div id="flash"></div>
+
+  <!-- sign in -->
+  <section id="viewLogin" hidden>
+    <div class="card">
+      <div style="text-align:center;padding-block:10px 20px">
+        <h2 class="page">FacultyMe Caller</h2>
+        <div class="sub">Telecalling team</div>
+      </div>
+      <form id="loginForm">
+        <div class="field"><label for="username">Caller ID</label>
+          <input id="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
+        <div class="field"><label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn-steel" type="submit">Sign in</button>
+      </form>
+      <p class="muted" style="text-align:center;margin-top:16px">Your admin sends your login on WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- set password -->
+  <section id="viewReset" hidden>
+    <div class="card">
+      <div class="eyebrow">First sign-in</div>
+      <h2 class="page">Set your password</h2>
+      <p class="sub" style="margin-bottom:16px">The one-time password you were sent stops working after this.</p>
+      <form id="resetForm">
+        <div class="field"><label for="newPass">New password</label>
+          <input id="newPass" type="password" autocomplete="new-password" minlength="8" required></div>
+        <div class="field"><label for="newPass2">Type it again</label>
+          <input id="newPass2" type="password" autocomplete="new-password" minlength="8" required></div>
+        <button class="btn btn-go" type="submit">Save and continue</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- my list -->
+  <section id="viewList" hidden>
+    <div class="eyebrow" id="todayLabel"></div>
+    <h2 class="page" style="margin-bottom:14px">My schools</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="v mono" id="sAssigned">0</div><div class="k">Assigned</div></div>
+      <div class="stat"><div class="v mono" id="sCalled" style="color:var(--steel)">0</div><div class="k">Called</div></div>
+      <div class="stat"><div class="v mono" id="sVac" style="color:var(--go)">0</div><div class="k">Vacancy</div></div>
+      <div class="stat"><div class="v mono" id="sLeft">0</div><div class="k">Left</div></div>
+    </div>
+    <div id="schoolList"></div>
+  </section>
+
+  <!-- one school -->
+  <section id="viewSchool" hidden>
+    <button class="btn btn-ghost btn-sm" id="backToList" style="margin-bottom:14px">← My schools</button>
+    <div class="card">
+      <h2 class="page" id="schName"></h2>
+      <div class="sub" id="schAddr"></div>
+      <div class="callbig">
+        <div class="num mono" id="schNum"></div>
+        <div class="via" id="schVia"></div>
+        <button class="dial" id="dialBtn" aria-label="Start call">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2z"/></svg>
+        </button>
+        <div class="muted" style="margin-top:10px">Tap to call</div>
+      </div>
+      <div class="hist" id="schHistory"></div>
+    </div>
+  </section>
+
+  <!-- outcome -->
+  <section id="viewOutcome" hidden>
+    <div class="card">
+      <div class="eyebrow" id="callTimer">Call in progress</div>
+      <h2 class="page" id="outName" style="margin-bottom:16px"></h2>
+
+      <div class="field"><label>What happened</label>
+        <div class="chips" id="outcomeChips" role="group" aria-label="Outcome">
+          <button type="button" class="chip" data-v="vacancy" aria-pressed="false">Vacancy</button>
+          <button type="button" class="chip" data-v="no_vacancy" aria-pressed="false">No vacancy</button>
+          <button type="button" class="chip" data-v="callback" aria-pressed="false">Call back</button>
+          <button type="button" class="chip" data-v="no_answer" aria-pressed="false">No answer</button>
+        </div>
+      </div>
+
+      <div id="vacancyFields" hidden>
+        <div class="field"><label for="oSubject">Subject</label>
+          <input id="oSubject" list="subjects" placeholder="PGT Physics">
+          <datalist id="subjects">
+            <option>PGT Physics</option><option>PGT Chemistry</option><option>PGT Maths</option>
+            <option>PGT Biology</option><option>TGT English</option><option>TGT Hindi</option>
+            <option>TGT Social Science</option><option>Primary — all subjects</option>
+            <option>Pre-primary</option><option>Computer Science</option><option>Physical Education</option>
+          </datalist>
+        </div>
+        <div class="field"><label for="oGrade">Grade</label>
+          <select id="oGrade">
+            <option>Classes 11–12</option><option>Classes 9–10</option><option>Classes 6–8</option>
+            <option>Classes 1–5</option><option>Pre-primary</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="followUpField" hidden>
+        <label for="oFollowUp">Call back on</label>
+        <input id="oFollowUp" type="date">
+      </div>
+
+      <div class="field"><label for="oNote">Note</label>
+        <textarea id="oNote" placeholder="What did they say?"></textarea></div>
+
+      <div class="field"><label for="oWa">WhatsApp number they gave (optional)</label>
+        <input id="oWa" class="mono" inputmode="tel" placeholder="98860 41234"></div>
+
+      <button class="btn btn-go" id="saveSend">Save and send WhatsApp</button>
+      <button class="btn btn-ghost" id="saveOnly">Save only</button>
+    </div>
+  </section>
+
+  <!-- whatsapp -->
+  <section id="viewWhatsApp" hidden>
+    <div class="card">
+      <div class="eyebrow">WhatsApp</div>
+      <h2 class="page" id="waName" style="margin-bottom:16px"></h2>
+      <div class="field"><label for="waTemplate">Approved template</label>
+        <select id="waTemplate"></select></div>
+      <div class="msg info" id="waPreview"></div>
+      <div class="field"><label for="waTo">Send to</label>
+        <input id="waTo" class="mono" inputmode="tel"></div>
+      <p class="muted" style="margin-bottom:13px">Only send to a number the school gave you — that is their consent.</p>
+      <button class="btn btn-go" id="waSend">Send</button>
+      <button class="btn btn-ghost" id="waSkip">Skip</button>
+    </div>
+  </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

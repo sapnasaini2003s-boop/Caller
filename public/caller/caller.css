@@ -1,0 +1,110 @@
+/* Caller app — used by the phone. Self-contained; shares nothing with admin. */
+
+:root{
+  --paper:#F7F5F1; --card:#FFFFFF;
+  --ink:#151C22; --ink-2:#4A565F; --ink-3:#7C8792;
+  --line:#E2DED6; --line-2:#CFCAC0;
+  --steel:#2C5670; --steel-soft:#E8EFF3;
+  --go:#1B6E48; --go-soft:#E4F0EA;
+  --wait:#96620B; --wait-soft:#F7EEDC;
+  --stop:#A6403A; --stop-soft:#F6E7E5;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#12181D; --card:#1A2228;
+    --ink:#EDEAE4; --ink-2:#AAB4BC; --ink-3:#7C8792;
+    --line:#2B353D; --line-2:#3A464F;
+    --steel:#8FBDD8; --steel-soft:#1E2C35;
+    --go:#6FCB9B; --go-soft:#16281F;
+    --wait:#E0B460; --wait-soft:#2A2116;
+    --stop:#E89189; --stop-soft:#2C1B19;
+    color-scheme:dark;
+  }
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.55 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;text-wrap:balance}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+}
+.topbar .brand{font-family:"Archivo",sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.topbar .who{font-size:12px;color:var(--ink-3);margin-left:auto;text-align:right;line-height:1.35}
+.topbar a{color:var(--steel);font-size:13px;font-weight:600;text-decoration:none}
+
+main{max-width:640px;margin:0 auto;padding:18px 16px 72px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 16px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+h2.page{font-size:20px;font-weight:600;margin-top:6px}
+.sub{font-size:13.5px;color:var(--ink-3);margin-top:3px}
+.muted{color:var(--ink-3);font-size:13.5px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+input,select,textarea{
+  width:100%;padding:12px 12px;border:1px solid var(--line-2);border-radius:3px;
+  background:var(--paper);color:var(--ink);font-family:inherit;font-size:16px;
+}
+textarea{resize:vertical;min-height:80px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,
+button:focus-visible,a:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+
+/* Touch targets stay large — these are tapped all day, often one-handed. */
+.btn{display:block;width:100%;text-align:center;border:0;border-radius:3px;
+  font-family:inherit;font-size:16px;font-weight:600;padding:15px 14px;cursor:pointer}
+.btn[disabled]{opacity:.55;cursor:default}
+.btn-go{background:var(--go);color:#fff}
+.btn-steel{background:var(--steel);color:var(--card)}
+.btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--line-2)}
+.btn+.btn{margin-top:10px}
+.btn-sm{width:auto;display:inline-block;font-size:14px;padding:9px 15px}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:14px}
+.stat{background:var(--card);padding:12px 6px;text-align:center}
+.stat .v{font-family:"Archivo",sans-serif;font-size:21px;font-weight:700;line-height:1}
+.stat .k{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-top:5px}
+
+.schoolrow{display:block;width:100%;text-align:left;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--line-2);
+  padding:14px 13px;margin-bottom:9px;border-radius:2px;cursor:pointer;font-family:inherit}
+.schoolrow.pending{border-left-color:var(--steel)}
+.schoolrow.callback{border-left-color:var(--wait)}
+.schoolrow.done{border-left-color:var(--go);opacity:.6}
+.schoolrow .nm{font-size:15px;font-weight:600;line-height:1.3;color:var(--ink)}
+.schoolrow .dt{font-size:12px;color:var(--ink-3);margin-top:5px;display:flex;gap:9px;flex-wrap:wrap}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:15px;padding:12px 16px;border-radius:3px;border:1px solid var(--line-2);
+  background:var(--paper);color:var(--ink-2);cursor:pointer;font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--go-soft);border-color:var(--go);color:var(--go);font-weight:600}
+
+.callbig{text-align:center;padding-block:12px}
+.callbig .num{font-family:"IBM Plex Mono",monospace;font-size:23px;margin-top:8px}
+.callbig .via{font-size:12.5px;color:var(--ink-3);margin-top:7px}
+.dial{width:84px;height:84px;border-radius:50%;background:var(--go);margin:20px auto 0;
+  display:grid;place-items:center;border:0;cursor:pointer}
+.dial svg{width:33px;height:33px;fill:#fff}
+
+.msg{padding:12px 14px;border-radius:3px;font-size:14px;margin-bottom:14px;line-height:1.5}
+.msg.err{background:var(--stop-soft);color:var(--stop);border:1px solid color-mix(in srgb,var(--stop) 26%,transparent)}
+.msg.ok{background:var(--go-soft);color:var(--go);border:1px solid color-mix(in srgb,var(--go) 26%,transparent)}
+.msg.info{background:var(--steel-soft);color:var(--steel);border:1px solid color-mix(in srgb,var(--steel) 24%,transparent)}
+
+.hist{border-top:1px solid var(--line);margin-top:16px;padding-top:13px}
+.hist ul{margin:0;padding:0}
+.hist li{list-style:none;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.empty{text-align:center;color:var(--ink-3);padding:38px 10px;font-size:14.5px}
+[hidden]{display:none!important}
